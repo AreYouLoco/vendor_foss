@@ -64,24 +64,17 @@ downloadFromRepo() {
 		repo_dir="$2"
 		package="$3"
 		overrides="$4"
-		echo "Przypisano parametry: $1 $2 $3 $4"
-		
+				
 		mkdir -p "$repo_dir"
-		echo "Utworzono dir $repo_dir"
 	if [ ! -f "$repo_dir"/index.xml ];then
 	
-		echo "Utworzono folder repozytorium."
 		#TODO: Check security keys
 		downloadStuff "$repo"/index.jar "$repo_dir"/index.jar
-		echo "Index repo $repo jest."
 		unzip -p "$repo_dir"/index.jar index.xml > "$repo_dir"/index.xml
-		echo "unzip works"
 	fi
 	
 		marketvercode="$(xmlstarlet sel -t -m '//application[id="'"$package"'"]' -v ./marketvercode "$repo_dir"/index.xml || true)"
-		echo "MARKET VER: $marketvercode"
 		apk="$(xmlstarlet sel -t -m '//application[id="'"$package"'"]/package[versioncode="'"$marketvercode"'"]' -v ./apkname "$repo_dir"/index.xml || xmlstarlet sel -t -m '//application[id="'"$package"'"]/package[1]' -v ./apkname "$repo_dir"/index.xml)"
-		echo "APK: $apk"
 		downloadStuff "$repo"/"$apk" bin/"$apk"
 	
 		#TODO: Check security keys -> WIP. GPG check works only for original fdroid repo!
@@ -98,6 +91,8 @@ downloadFromRepo() {
 #####
 
 ##### APK'S OF CHOICE :D
+#downloadFromRepo repo repo_dir package_name overrides
+
 #phh's Superuser
 #downloadFromRepo "$fdroid" "$fdroid_dir" "me.phh.superuser" "Superuser"
 #YouTube viewer
@@ -143,9 +138,9 @@ downloadFromRepo() {
 #downloadFromMicroG org.microg.gms.droidguard
 #downloadFromFdroid org.microg.nlp.backend.nominatim
 
-#downloadFromRepo "$fdroid" "$fdroid_dir" com.fsck.k9 "Email"
+downloadFromRepo "$fdroid" "$fdroid_dir" com.fsck.k9 "Email"
 downloadFromRepo "$microg" "$microg_dir" com.android.vending "Google Play Store"
-#downloadFromRepo "$bromite" "$bromite_dir" com.android.webview "Android System WebView"
+downloadFromRepo "$bromite" "$bromite_dir" com.android.webview "Android System WebView"
 
 echo >> apps.mk
 
